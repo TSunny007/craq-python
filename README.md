@@ -60,7 +60,7 @@ storage unit. Run using `python node.py`.
 #### Run Flags
 ```sh
 --port # Port to run the node process on. Default: 5201
---coordinator # Port of the coordinator process. Default: :1235
+--coordinator # Port of the coordinator process. Default: 5200
 ```
 
 ### Client
@@ -69,6 +69,6 @@ included in this project uses the [cmd](https://docs.python.org/3/library/cmd.ht
 
 #### Run Flags
 ```sh
---coordinator # Port of the coordinator process. Default: :1234
---read # Port of the node process to read from. Default: :1235
+--coordinator # Port of the coordinator process. Default: 5200
+--read # Port of the node process to read from. Default: 5201
 ```
