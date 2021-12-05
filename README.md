@@ -48,7 +48,7 @@ that's outside the scope of this project. Run using `python coordinator.py`.
 
 #### Run Flags
 ```sh
--- port # Port to run the coordinator process on. Default: 5200
+--port # Port to run the coordinator process on. Default: 5200
 ```
 
 ### Node
