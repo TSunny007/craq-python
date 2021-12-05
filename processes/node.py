@@ -22,8 +22,8 @@ def read():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", help="port to run the node process on", default=5201)
-    parser.add_argument("-c", "--coordinator", help="port of the coordinator process", default=5200)
+    parser.add_argument("-p", "--port", help="Port to run the node process on.", default=5201)
+    parser.add_argument("-c", "--coordinator", help="Port of the coordinator process.", default=5200)
 
     with app.app_context():
         args = parser.parse_args()

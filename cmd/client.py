@@ -23,9 +23,8 @@ def parse(arg):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", help="port to run the client", default=5000)
-    parser.add_argument("-c", "--coordinator", help="port of the coordinator process", default=5200)
-    parser.add_argument("-r", "--read", help="port of the node process to read from", default=5201)
+    parser.add_argument("-c", "--coordinator", help="Port of the coordinator process.", default=5200)
+    parser.add_argument("-r", "--read", help="Port of the node process to read from.", default=5201)
     args = parser.parse_args()
 
     CRAQShell().cmdloop()

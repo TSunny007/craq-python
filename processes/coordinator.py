@@ -25,7 +25,7 @@ def write():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", help="port to run the coordinator process on", default=5200)
+    parser.add_argument("-p", "--port", help="Port to run the coordinator process on.", default=5200)
     args = parser.parse_args()
     with app.app_context():
         nodes = []
