@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package craq;
+
+// The greeter service definition.
+service Coordinator {
+  // Sends a greeting
+  rpc Register (RegisterRequest) returns (RegisterReply) {}
+  rpc Write (WriteRequest) returns (WriteReply) {}
+}
+
+service Node {
+  rpc Read (ReadRequest) returns (ReadReply) {}
+  rpc Write (WriteRequest) returns (WriteReply) {}
+  // rpc UpdateChain (UpdateChainRequest) returns (UpdateChainReply);
+  // rpc ReadAll (ReadAllRequest) returns (ReadAllReply);
+  // rpc Acknowledge (AcknowledgeRequest) returns (AcknowledgeReply);
+}
+
+service Client {
+  rpc Read (ReadRequest) returns (ReadReply) {}
+  rpc Write (WriteRequest) returns (WriteReply) {}
+}
+
+message RegisterRequest {
+  int32 port = 1;
+}
+
+message RegisterReply {
+  int32 parentPort = 1;
+}
+
+message WriteRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message WriteReply {
+  bool success = 1;
+}
+
+message ReadRequest {
+  string key = 1;
+}
+  
+message ReadReply {
+  string key = 1;
+  string value = 2;
+}

@@ -1,31 +1,46 @@
-from flask import Flask, request
+import logging
 import argparse
-import requests
+from concurrent import futures
+import grpc
 import dbm
 
-app = Flask(__name__)
+from generated import spec_pb2, spec_pb2_grpc
 
-@app.route("/write", methods=['POST'])
-def write():
-    for k in request.form.keys():
-        with dbm.open(f'.{args.port}-dbm', 'c') as store:
-            store[k] = request.form[k]
-    return ({'message': f'Added value for key {k}'}, 201)
+class Node(spec_pb2_grpc.Node):
 
-@app.route("/read", methods=['GET'])
-def read():
-    if k := request.args.get('key', None):
-        with dbm.open(f'.{args.port}-dbm', 'r') as store:
-            if k in store:
-                return {k: store[k].decode('utf8')}, 200
-        return ({'message': 'Key does not exist in store.'}, 404)
+  def __init__(self, args):
+    super(Node, self).__init__()
+    # establish connection with coordinator and get chain info.
+    # we will assume we are the tail
+    channel = grpc.insecure_channel(f'localhost:{args.coordinator}')
+    self.coordinator = spec_pb2_grpc.CoordinatorStub(channel)
+    self.args = args
+    self.parentInfo: spec_pb2.RegisterReply = self.coordinator.Register(spec_pb2.RegisterRequest(port=args.port))
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", help="Port to run the node process on.", default=5201)
-    parser.add_argument("-c", "--coordinator", help="Port of the coordinator process.", default=5200)
+  def Read(self, request: spec_pb2.ReadRequest, context) -> spec_pb2.ReadReply:
+    with dbm.open(f'.{self.args.port}-dbm', 'r') as store:
+      val = store.get(request.key, bytearray()).decode('utf8')
+    return spec_pb2.ReadReply(key=request.key, value=val)
 
-    with app.app_context():
-        args = parser.parse_args()
-        chain_info = requests.post(f'http://127.0.0.1:{args.coordinator}/addNode', data= {'host': args.port}).json()
-        app.run(port=args.port, debug=True)
+  def Write(self, request: spec_pb2.WriteRequest, context) -> spec_pb2.WriteReply:
+    try:
+      with dbm.open(f'.{self.args.port}-dbm', 'c') as store:
+        store[request.key] = request.value
+      return spec_pb2.WriteReply(success=True)
+    except Exception:
+      return spec_pb2.WriteReply(success=False)
+  
+def serve(args):
+  server = grpc.server(futures.ThreadPoolExecutor(max_workers=5))
+  spec_pb2_grpc.add_NodeServicer_to_server(Node(args), server)
+  server.add_insecure_port(f'[::]:{args.port}')
+  server.start()
+  server.wait_for_termination()
+
+if __name__ == '__main__':
+  logging.basicConfig()
+  parser = argparse.ArgumentParser()
+  parser.add_argument("-p", "--port", help="Port to run the node process on.", default=5201)
+  parser.add_argument("-c", "--coordinator", help="Port of the coordinator process.", default=5200)
+  args = parser.parse_args()
+  serve(args)

@@ -37,7 +37,7 @@ Write |     +------------------+
 
 ## Processes
 There are 3 packages that should be started to run the system. The `node` and `coordinator`
-implementation in [processes](processes) uses the [Flask](https://flask.palletsprojects.com/en/2.0.x/) for communication and [dbm](https://docs.python.org/3/library/dbm.html) for storage. The `client` for interacting with the CRAQ system is implemented in [cmd](cmd).
+implementation in [processes](processes) uses the [Flask](https://flask.palletsprojects.com/en/2.0.x/) for communication and [dbm](https://docs.python.org/3/library/dbm.html) for storage. The `client` for interacting with the CRAQ system is implemented using [cmd](cmd).
 
 ### Coordinator
 Facilitates new writes to the chain; allows nodes to announce themselves to the
